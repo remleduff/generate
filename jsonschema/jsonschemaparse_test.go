@@ -228,6 +228,27 @@ func getKeyNames(m map[string]*Schema) []string {
 	return keys
 }
 
+func TestFormatAnnotation(t *testing.T) {
+	s := `{
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "Example",
+        "properties": {
+            "subobject": {
+                "type": "string",
+                "format": "date"
+            }
+		}
+	}`
+	so, err := Parse(s)
+
+	if err != nil {
+		t.Error("failed to parse the test JSON: ", err)
+	}
+	if len(so.Properties["subobject"].Annotations) != 1 {
+		t.Error("expected 1 annotation in subobject")
+	}
+}
+
 func TestThatAdditionalPropertiesCanBeExtracted(t *testing.T) {
 	s := `{
         "$schema": "http://json-schema.org/draft-04/schema#",

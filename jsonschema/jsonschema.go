@@ -36,6 +36,8 @@ type Schema struct {
 	Required             []string
 	AdditionalProperties AdditionalProperties
 
+	Annotations Annotations
+
 	// Default can be used to supply a default JSON value associated with a particular schema.
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.10.2
 	Default interface{}
@@ -241,4 +243,35 @@ func (ap *AdditionalProperties) UnmarshalJSON(data []byte) error {
 		*ap = append(*ap, &s)
 	}
 	return err
+}
+
+type Annotations map[string]string
+
+var knownAnnotations = []string{
+	"format",
+}
+
+func (s *Schema) UnmarshalJSON(data []byte) error {
+	m := map[string]interface{}{}
+	err := json.Unmarshal(data, &m)
+	if err != nil {
+		return err
+	}
+
+	for _, annotation := range knownAnnotations {
+		val, ok := m[annotation]
+		if ok {
+			if s.Annotations == nil {
+				s.Annotations = make(map[string]string)
+			}
+			s.Annotations[annotation] = val.(string)
+		}
+	}
+
+	type SchemaUnwrap Schema
+	err = json.Unmarshal(data, (*SchemaUnwrap)(s))
+	if err != nil {
+		return err
+	}
+	return nil
 }
