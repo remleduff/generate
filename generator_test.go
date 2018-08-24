@@ -98,6 +98,7 @@ func TestFieldGeneration(t *testing.T) {
 		"property4": {TypeValue: "object", AdditionalProperties: []*jsonschema.Schema{{TypeValue: "integer"}, {TypeValue: "integer"}}},
 		"property5": {TypeValue: "object", AdditionalProperties: []*jsonschema.Schema{{TypeValue: "object", Properties: map[string]*jsonschema.Schema{"subproperty1": {TypeValue: "integer"}}}}},
 		"property6": {TypeValue: "object", AdditionalProperties: []*jsonschema.Schema{{TypeValue: "object", Properties: map[string]*jsonschema.Schema{"subproperty1": {TypeValue: "integer"}}}}},
+		"property7": {TypeValue: "string", Annotations: map[string]string{"format": "date"}},
 	}
 
 	lookupTypes := map[string]*jsonschema.Schema{
@@ -112,8 +113,8 @@ func TestFieldGeneration(t *testing.T) {
 		t.Error("Failed to get the fields: ", err)
 	}
 
-	if len(result) != 6 {
-		t.Errorf("Expected 6 results, but got %d results", len(result))
+	if len(result) != 7 {
+		t.Errorf("Expected 7 results, but got %d results", len(result))
 	}
 
 	testField(result["Property1"], "property1", "Property1", "string", false, t)
@@ -122,6 +123,7 @@ func TestFieldGeneration(t *testing.T) {
 	testField(result["Property4"], "property4", "Property4", "map[string]interface{}", false, t)
 	testField(result["Property5"], "property5", "Property5", "map[string]*Property5", false, t)
 	testField(result["Property6"], "property6", "Property6", "map[string]*undefined", false, t)
+	testField(result["Property7"], "property7", "Property7", "time.Date", false, t)
 }
 
 func TestFieldGenerationWithArrayReferences(t *testing.T) {

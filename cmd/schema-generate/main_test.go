@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/a-h/generate"
+	generate2 "github.com/a-h/generate/output.json"
 )
 
 func TestThatFieldNamesAreOrdered(t *testing.T) {
@@ -17,7 +18,7 @@ func TestThatFieldNamesAreOrdered(t *testing.T) {
 		"b": {},
 	}
 
-	actual := getOrderedFieldNames(m)
+	actual := generate2.getOrderedFieldNames(m)
 	expected := []string{"b", "z"}
 
 	if !reflect.DeepEqual(actual, expected) {
@@ -32,7 +33,7 @@ func TestThatStructNamesAreOrdered(t *testing.T) {
 		"a": {},
 	}
 
-	actual := getOrderedStructNames(m)
+	actual := generate2.getOrderedStructNames(m)
 	expected := []string{"a", "b", "c"}
 
 	if !reflect.DeepEqual(actual, expected) {
@@ -46,7 +47,7 @@ func TestThatThePackageCanBeSet(t *testing.T) {
 
 	r, w := io.Pipe()
 
-	go output(w, make(map[string]generate.Struct), make(map[string]generate.Field))
+	go generate2.Output(w, make(map[string]generate.Struct), make(map[string]generate.Field))
 
 	lr := io.LimitedReader{R: r, N: 72}
 	bs, _ := ioutil.ReadAll(&lr)

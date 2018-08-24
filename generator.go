@@ -11,7 +11,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/a-h/generate/jsonschema"
+	"github.com/remleduff/generate/jsonschema"
 )
 
 // Generator will produce structs from the JSON schema.
@@ -285,6 +285,18 @@ func getTypeForField(parentTypeKey *url.URL, fieldName string, fieldGoName strin
 		return name, fmt.Errorf("failed to get the type for %s with error %s",
 			fieldGoName,
 			err.Error())
+	}
+
+	if name == "string" && fieldSchema.Annotations != nil {
+		format, _ := fieldSchema.Annotations["format"]
+		switch format {
+		case "date":
+			name = "time.Time"
+		case "time":
+			name = "time.Time"
+		case "date-time":
+			name = "time.Time"
+		}
 	}
 
 	return name, nil
